@@ -4,6 +4,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
+import util.MyCallback;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -21,7 +22,7 @@ public class MyFirstProducer {
         KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(kafkaprops);
 
         //创建消息
-        ProducerRecord<String, String> record = new ProducerRecord<String,String>("cnwTopic", "hello kafka");
+        ProducerRecord<String, String> record = new ProducerRecord<String,String>("cnwTopic", "hello kafka callback1");
         /**
          * Fire-and-forget----此方法用来发送消息到broker，不关注消息是否成功到达。
          * 大部分情况下，消息会成功到达broker，因为kafka是高可用的，producer会自动重试发送。
@@ -40,18 +41,25 @@ public class MyFirstProducer {
          * 使用此对象的get()阻塞方法可以查看send()方法是否执行成功。
          * get()有返回值才会继续发送消息
          */
-        Future<RecordMetadata> future = kafkaProducer.send(record);
-        try {
-            RecordMetadata recordMetadata = future.get();
-            String topic = recordMetadata.topic();
-            int partition = recordMetadata.partition();
-            long offset = recordMetadata.offset();
-            System.out.println("topic:"+topic+",partition"+partition+",offset:"+offset);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+//        Future<RecordMetadata> future = kafkaProducer.send(record);
+//        try {
+//            RecordMetadata recordMetadata = future.get();
+//            String topic = recordMetadata.topic();
+//            int partition = recordMetadata.partition();
+//            long offset = recordMetadata.offset();
+//            System.out.println("topic:"+topic+",partition"+partition+",offset:"+offset);
+//            kafkaProducer.close();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
 
+        /**
+         * Asynchronous Send(异步发送)---以回调函数的形式调用send()方法，
+         * 当收到broker的响应，会触发回调函数执行。
+         */
+        kafkaProducer.send(record,new MyCallback());
+        kafkaProducer.close();
     }
 }
