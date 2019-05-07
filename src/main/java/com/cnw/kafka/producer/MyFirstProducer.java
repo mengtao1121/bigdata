@@ -17,12 +17,13 @@ public class MyFirstProducer {
         kafkaprops.put("bootstrap.servers","mt01:9092,mt02:9092,mt03:9092");
         kafkaprops.put("key.serializer", StringSerializer.class.getName());
         kafkaprops.put("value.serializer", StringSerializer.class.getName());
+        kafkaprops.put("partitioner.class", "util.MyPartitioner");
 
         //创建kafkaproducer,用于与kafka集群交互，发送消息
         KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(kafkaprops);
 
         //创建消息
-        ProducerRecord<String, String> record = new ProducerRecord<String,String>("cnwTopic", "hello kafka callback1");
+//        ProducerRecord<String, String> record = new ProducerRecord<String,String>("cnwTopic", "hello kafka callback1");
         /**
          * Fire-and-forget----此方法用来发送消息到broker，不关注消息是否成功到达。
          * 大部分情况下，消息会成功到达broker，因为kafka是高可用的，producer会自动重试发送。
@@ -59,7 +60,15 @@ public class MyFirstProducer {
          * Asynchronous Send(异步发送)---以回调函数的形式调用send()方法，
          * 当收到broker的响应，会触发回调函数执行。
          */
+//        kafkaProducer.send(record,new MyCallback());
+//        kafkaProducer.close();
+
+        /**
+         * 自定义分区器
+         */
+        ProducerRecord<String, String> record =
+                new ProducerRecord<String,String>("cnwTopic", "1","11");
         kafkaProducer.send(record,new MyCallback());
-        kafkaProducer.close();
+        kafkaProducer.flush();
     }
 }
