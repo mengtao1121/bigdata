@@ -14,7 +14,7 @@ public class MyFirstComsumer {
         Properties properties = new Properties();
         properties.put("bootstrap.servers", "mt01:9092,mt02:9092");
         properties.put("key.deserializer", StringDeserializer.class.getName());
-        properties.put("bootstrap.servers", StringDeserializer.class.getName());
+        properties.put("value.deserializer", StringDeserializer.class.getName());
         //指定kafkaConsumer属于哪个群组
         properties.put("group.id", "cnwGroup");
         //禁掉kafka自动提交offset
