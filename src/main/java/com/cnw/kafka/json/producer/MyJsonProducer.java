@@ -1,4 +1,4 @@
-package com.cnw.kafka.producer;
+package com.cnw.kafka.json.producer;
 
 import com.google.gson.Gson;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -23,21 +23,24 @@ public class MyJsonProducer {
         Gson gson = new Gson();
         //创建一个List对象，用于存储数据
         ArrayList<HashMap<String, String>> dataList = new ArrayList<HashMap<String, String>>();
+        //声明一个字符串变量，用于存储转换成的json字符串
+        String jsonString = "";
+        KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(kafkaprops);
+        //一次发送多个java对象
         try {
             for (int i = 0; i < 10; i++) {
                 HashMap<String, String> dbData = new HashMap<String, String>();
-                dbData.put("id",i+"");
-                dbData.put("name","zhang"+i);
-                dbData.put("age",i+"");
+                dbData.put("id", i + "");
+                dbData.put("name", "zhang" + i);
+                dbData.put("age", i + "");
                 dataList.add(dbData);
-
-                String jsonString = gson.toJson(dataList);
-                System.out.println("转换后的json="+ jsonString);
-                KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(kafkaprops);
-                ProducerRecord<String, String> record = new ProducerRecord<String, String>("cnwTopic", jsonString);
-                kafkaProducer.send(record, new MyCallback());
-                kafkaProducer.close();
             }
+            jsonString = gson.toJson(dataList);
+            System.out.println("转换后的json="+ jsonString);
+            //消息通过json字符串发送出去
+            ProducerRecord<String, String> record = new ProducerRecord<String, String>("cnwTopic", jsonString);
+            kafkaProducer.send(record, new MyCallback());
+            kafkaProducer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
