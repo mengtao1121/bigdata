@@ -16,7 +16,6 @@ public class MyJsonProducer2 {
         kafkaprops.put("bootstrap.servers","mt01:9092,mt02:9092,mt03:9092");
         kafkaprops.put("key.serializer", StringSerializer.class.getName());
         kafkaprops.put("value.serializer", StringSerializer.class.getName());
-        kafkaprops.put("partitioner.class", "util.MyPartitioner");
 
         //创建kafka生产者
         KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(kafkaprops);

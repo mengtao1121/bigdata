@@ -17,7 +17,6 @@ public class MyJsonProducer {
         kafkaprops.put("bootstrap.servers","mt01:9092,mt02:9092,mt03:9092");
         kafkaprops.put("key.serializer", StringSerializer.class.getName());
         kafkaprops.put("value.serializer", StringSerializer.class.getName());
-        kafkaprops.put("partitioner.class", "util.MyPartitioner");
 
         //声明一个GSON对象，用于将Java对象转为JSON对象
         Gson gson = new Gson();
@@ -38,8 +37,8 @@ public class MyJsonProducer {
             jsonString = gson.toJson(dataList);
             System.out.println("转换后的json="+ jsonString);
             //消息通过json字符串发送出去
-            ProducerRecord<String, String> record = new ProducerRecord<String, String>("cnwTopic", jsonString);
-            kafkaProducer.send(record, new MyCallback());
+            ProducerRecord<String, String> record = new ProducerRecord<String, String>("cnwTopic","jj", jsonString);
+            kafkaProducer.send(record,new MyCallback());
             kafkaProducer.close();
         } catch (Exception e) {
             e.printStackTrace();
